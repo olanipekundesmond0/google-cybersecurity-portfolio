@@ -1,6 +1,6 @@
 Conducted an internal security audit for a fictional small business (Botium Toys) using the NIST Cybersecurity Framework.
 
-SIssue 1: All employees had unrestricted access to cardholder data and customer PII/SPII.
+Issue 1: All employees had unrestricted access to cardholder data and customer PII/SPII.
 Category: Administrative
 Control name: Access control policy
 Control type: Preventative

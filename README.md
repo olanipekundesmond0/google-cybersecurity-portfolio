@@ -1,4 +1,4 @@
-# DNS Outage Incident Report — Network Traffic Analysis
+# DNS Outage Incident Report, Network Traffic Analysis
 
 ## Overview
 This repository documents a hands-on cybersecurity incident analysis exercise. It walks through diagnosing a website outage using `tcpdump` packet capture data, tracing the failure back to a DNS service issue on the client's domain server.

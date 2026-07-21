@@ -1,34 +1,17 @@
-# Cybersecurity Incident Report: Network Traffic Analysis
+# Cybersecurity Incident Report: SYN Flood DoS Attack
 
-## Part 1: Summary of the Problem Found in the DNS and ICMP Traffic Log
+## Part 1: Summary of the Problem Found in the Traffic Log
 
-**The UDP protocol reveals that:**
-At 13:24 PM, my computer (192.51.100.15) sent a request to the domain server (203.0.113.2) asking for the IP address of yummyrecipesforme.com, using query ID 35084.
+The Wireshark log shows legitimate users — such as 198.51.100.23, 198.51.100.14, and 198.51.100.5 — each sending one SYN request and successfully completing the handshake to load the sales page. However, IP address 203.0.113.0 sent 139 SYN requests without ever completing the handshake with a final ACK. This pattern identifies the incident as a **SYN flood Denial of Service (DoS) attack** — a single source overwhelming the server with incomplete connection requests.
 
-**The ICMP echo reply returned the error message:**
-The domain server (203.0.113.2) replied to my computer (192.51.100.15) with an ICMP error message saying the domain (port 53) was unreachable.
+Due to the SYN flood DoS attack, the server's connection resources were used up holding open all the half-finished connections from 203.0.113.0. This meant the server had nothing left to respond with when legitimate users sent their own SYN requests, causing the connection timeout error.
 
-**The port noted in the error message is used for:**
-Port 53, which is used for DNS (domain name resolution) service.
+## Part 2: Analysis of the Data and Impact of the Incident
 
-**The most likely issue is:**
-The DNS service isn't running on my client's domain server, which is why I keep getting the "port 53 unreachable" response.
+This attack affected the organization by preventing employees from accessing the website to do their day-to-day work, and also prevented external customers from browsing the website.
 
----
+**Potential consequences:**
+The potential consequences of this attack include lost employee productivity, lost sales during the outage, and damage to the organization's reputation, as customers may lose trust in the company's ability to keep its website secure and reliable.
 
-## Part 2: Analysis of the Data and Cause of the Incident
-
-**Time incident occurred:**
-13:24 PM
-
-**How the IT team became aware of the incident:**
-The IT team became aware of this incident due to multiple users reporting that they were unable to access the website.
-
-**Actions taken by the IT department to investigate the incident:**
-The IT department took action by first attempting to access the website themselves, which reproduced the same error. They then ran tcpdump to capture network traffic and analyze the response directly from the domain server.
-
-**Key findings of the investigation:**
-Key findings from the investigation include a repeated ICMP error message from the domain server (203.0.113.2) stating "udp port 53 unreachable." This error was returned consistently across multiple attempts, indicating the issue was not a one-time glitch.
-
-**Likely cause of the incident:**
-A likely cause of this incident is that the DNS service on the domain server (203.0.113.2) is not running, which is preventing DNS lookups for the client's website.
+**Recommended prevention (optional):**
+To help prevent this type of attack in the future, the organization could implement rate limiting to cap the number of connection requests from a single source, and deploy a firewall or intrusion prevention system (IPS) with built-in SYN flood protection to automatically detect and drop malicious half-open connection patterns.

@@ -1,22 +1,23 @@
-# DNS Outage Incident Report, Network Traffic Analysis
+# SYN Flood DoS Attack — Network Traffic Analysis
 
 ## Overview
-This repository documents a hands-on cybersecurity incident analysis exercise. It walks through diagnosing a website outage using `tcpdump` packet capture data, tracing the failure back to a DNS service issue on the client's domain server.
+This repository documents a hands-on cybersecurity incident analysis exercise identifying and explaining a SYN flood Denial of Service (DoS) attack using a Wireshark TCP/HTTP traffic log.
 
 This was completed as part of the **Google Cybersecurity Professional Certificate** (Course 3: Networks and Network Security).
 
 ## Scenario
-Multiple customers reported being unable to access a client's website, `www.yummyrecipesforme.com`, and were seeing a **"destination port unreachable"** error. As the analyst investigating the issue, I reproduced the error myself, then used `tcpdump` to capture and analyze the network traffic behind the failure.
+As a security analyst for a travel agency, I received an automated alert about a problem with the company's web server, then received a connection timeout error trying to visit the site myself. Using a packet sniffer, I captured and analyzed traffic to and from the server to identify the cause.
 
 ## Files in this Repo
-- [`incident-report.md`](./incident-report.md) — Full two-part incident report (traffic analysis + incident summary)
-- [`tcpdump-log.txt`](./tcpdump-log.txt) — Raw captured packet data used for the analysis
+- [`incident-report.md`](./incident-report.md) — Full two-part incident report (attack analysis + organizational impact)
+- [`wireshark-tcp-log.xlsx`](./wireshark-tcp-log.xlsx) — Captured TCP/HTTP traffic log used for the analysis
 
 ## Key Finding
-Every DNS lookup attempt from the client machine (`192.51.100.15`) to the DNS server (`203.0.113.2`) on **port 53** returned an ICMP `udp port 53 unreachable` error, consistently, across three separate attempts. This points to the DNS service itself being down on the domain server, rather than a network-level block, since the server was reachable and actively responding with an error (not silently dropping traffic).
+Legitimate users (e.g. 198.51.100.23, 198.51.100.14, 198.51.100.5) each completed a normal 3-way TCP handshake (SYN → SYN-ACK → ACK) to successfully load the site. In contrast, IP address **203.0.113.0** sent **139 SYN requests** without ever completing a single handshake — exhausting the server's connection resources and causing it to stop responding to legitimate traffic. This is a classic **SYN flood DoS attack**.
 
 ## Skills Demonstrated
-- Reading and interpreting `tcpdump` packet capture logs
-- Understanding the DNS resolution process (UDP, port 53)
-- Differentiating ICMP error responses from firewall-blocked traffic
-- Writing a structured cybersecurity incident report
+- Reading and interpreting Wireshark TCP/HTTP traffic logs
+- Understanding the TCP three-way handshake and how it can be exploited
+- Differentiating a DoS attack (single source) from a DDoS attack (distributed sources)
+- Assessing business impact of a network security incident
+- Recommending mitigation strategies (rate limiting, IPS/firewall SYN flood protection)
